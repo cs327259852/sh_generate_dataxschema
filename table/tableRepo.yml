@@ -1,0 +1,28 @@
+repo:
+    sql:
+        全量{table}:
+            type: read
+            driect: oracle
+            sql: >
+                select {field} from {origin_table} where lastmodifytime > sysdate-130
+
+        更新{table}:
+            type: write
+            driect: oracle
+            sql: >
+                merge into
+                 {table} a using
+                 (select #{values:PK} as PK from dual) b on (a.pk = b.PK)
+                 WHEN MATCHED THEN
+                   UPDATE SET {update_field}
+                 WHEN NOT MATCHED THEN
+                   INSERT
+                    {a_field}
+                   VALUES
+                    {values_field}
+
+    retry:
+        重试规则1:
+            ruleId : 1
+            ruleName: 重试规则1
+            rule: rule

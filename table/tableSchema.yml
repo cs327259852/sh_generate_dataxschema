@@ -1,0 +1,19 @@
+schema:
+  {table}ToMid:
+    enable: true
+    extract:
+      - type: jdbc
+        cron: 1 */8 * * * * *
+        command_datasource: rabbitmq@{rabbitmq}
+        command_queue: jdbc-dataximage-queue
+        cursor_mode: true
+        clear_queue: []
+        pause_other: true/false
+        datasource: jdbc@{source_jdbc}
+        is_log_change: false
+        repo: sql@全量{table}
+
+    load:
+      - type: jdbc
+        datasource: jdbc@{target_jdbc}
+        repo: sql@更新{table}
